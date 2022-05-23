@@ -55,12 +55,12 @@ func (c *cache[T]) SetWithTTLNano(key string, value T, ttl time.Duration) {
 	c.datas[key] = data
 	c.Unlock()
 }
-func (c *cache[T]) Get(k string) (interface{}, bool) {
+func (c *cache[T]) Get(k string) (t T, ok bool) {
 	c.RLock()
 	data, found := c.datas[k]
 	c.RUnlock()
 	if !found || data.Expired() {
-		return nil, false
+		return t, ok
 	}
 	return data.value, true
 }
@@ -76,4 +76,11 @@ func GetInstance() Cache[any] {
 		}
 	})
 	return instance
+}
+
+func New[T any]() Cache[T] {
+	return &cache[T]{
+		datas:      make(map[string]*data[T]),
+		ttlDefault: DEFAULT_TTL_CACHE * time.Millisecond,
+	}
 }
