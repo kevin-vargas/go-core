@@ -3,4 +3,7 @@ go 1.18
 use (
 	./cache
 	./config
+	./rest
+	./log
+	./jwt
 )
